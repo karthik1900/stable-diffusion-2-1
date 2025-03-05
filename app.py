@@ -1,12 +1,16 @@
+import os
+os.environ["HF_HUB_ENABLE_HF_TRANSFER"]='1'
+from huggingface_hub import snapshot_download
 from diffusers import StableDiffusionPipeline, DPMSolverMultistepScheduler
 import torch
 from io import BytesIO
 import base64
-import os
 
 class InferlessPythonModel:
     def initialize(self):
-        self.pipe = StableDiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-2-1",use_safetensors=True,torch_dtype=torch.float16).to("cuda")
+        model_id = "stabilityai/stable-diffusion-2-1"
+        snapshot_download(repo_id=model_id,allow_patterns=["*.safetensors"])
+        self.pipe = StableDiffusionPipeline.from_pretrained(model_id,use_safetensors=True,torch_dtype=torch.float16).to("cuda")
         self.pipe.scheduler = DPMSolverMultistepScheduler.from_config(self.pipe.scheduler.config)
         
     def infer(self, inputs):
