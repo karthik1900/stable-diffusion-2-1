@@ -1,3 +1,4 @@
+import time
 print("time1: ", time.time())
 from diffusers import StableDiffusionPipeline
 print("time2: ", time.time())
